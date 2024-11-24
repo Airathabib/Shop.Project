@@ -1,56 +1,33 @@
-import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { ProductlistComponent } from "./StyledProductList.css";
 
-const StyledProductList = styled.div`
-  display: inline-block;
-  margin: 10px;
-  width: 220px;
-  height: 236px;
-
-  & > a {
-    display: block;
-    color: inherit;
-    font-size: 20px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-weight: 600;
-  }
-
-  & > img {
-    max-width: 100%;
-    width: 150px;
-  }
-
-  & span {
-    font-weight: 600;
-  }
-`
+const { StyledProductList } = ProductlistComponent;
 
 export interface productListProps {
-  title: string,   
-  price : number,
-  comments : number,
-  url:string,
+	title: string,
+	price: number,
+	comments: number,
+	url: string,
 }
 export const ProductList = ({
-  title,
-  price,
-  comments,
-  url
+	title,
+	price,
+	comments,
+	url
 }: productListProps) => {
 
-  return (
-    <StyledProductList>
-      <Link to="/"> {title}</Link>
-      <img src={url} alt={url}></img>
-      <div>
-        <span>Price: </span>
-        {price}
-      </div>
-      <div>
-        <span>Comments: </span>
-        {comments}
-      </div>
-    </StyledProductList> 
-  );
+	return (
+		<StyledProductList>
+			<Link to="/"> {title}</Link>
+			<img src={url} alt={url}></img>
+			<div>
+				<span>Price: </span>
+				{price}
+			</div>
+			<div>
+				<span>Comments: </span>
+				{comments}
+			</div>
+		</StyledProductList>
+	);
 }

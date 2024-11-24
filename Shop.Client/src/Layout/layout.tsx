@@ -1,41 +1,26 @@
 import React from "react";
-import List from "../List/list";
-import ProductItem from "../ProductItem/productItem";
-import styled from "styled-components";
+import List from "../List/List";
+import ProductItem from "../ProductItem/ProductItem";
 import { Route, Routes } from "react-router-dom";
-import Header from "../Header/header";
+import Header from "../Header/Header";
 import StartPage from "../StartPage/StartPage";
+import { LayoutComponents } from "./Layout.css"
 
-const StyledLayout = styled.div`
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: calc(var(--bs-gutter-x) * 0.5);
-  padding-left: calc(var(--bs-gutter-x) * 0.5);
+const { StyledLayout } = LayoutComponents;
 
-  & > div {
-    min-height: 100vh;
-    min-width: 100vw;
-    background-color: #f1f1f1;
-    padding: 3rem;
-    text-align: center;
-  }
-`
-
-interface LayoutProps {}
-
-const Layout: React.FC<LayoutProps> = () => {
-  return (
-    <StyledLayout>
-      <div>
-        <Header />
-        <Routes>
-          <Route path="/" element={<StartPage />} />
-          <Route path={"/products/:productId"} element={<ProductItem />} />
-          <Route path={"/products"} element={<List />} />
-        </Routes>
-      </div>
-    </StyledLayout>
-  );
+const Layout: React.FC = () => {
+	return (
+		<StyledLayout>
+			<div>
+				<Header />
+				<Routes>
+					<Route path="/" element={<StartPage />} />
+					<Route path={"/products/:productId"} element={<ProductItem />} />
+					<Route path={"/products"} element={<List />} />
+				</Routes>
+			</div>
+		</StyledLayout>
+	);
 };
 
 export default Layout;

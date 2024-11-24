@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import Layout from "./Layout/layout";
+import Layout from "./Layout/Layout";
 import styled from "styled-components";
 
 const StyledApp = styled.div`
@@ -7,13 +7,13 @@ const StyledApp = styled.div`
 `
 
 function App() {
-  return (
-    <BrowserRouter>
-      <StyledApp>
-        <Layout />
-      </StyledApp>
-    </BrowserRouter>
-  );
+	return (
+		<BrowserRouter>
+			<StyledApp>
+				<Layout />
+			</StyledApp>
+		</BrowserRouter>
+	);
 }
 
 export default App;

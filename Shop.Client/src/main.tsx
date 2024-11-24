@@ -4,22 +4,22 @@ import FontStyles from "./FontStyles";
 import { Provider } from "react-redux";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import { listSlices } from "./redux/slices.tsx";
-import { productSlices } from "./redux/slices.tsx";
+import { listSlices } from "./redux/listSlices.ts";
+import { productSlices } from "./redux/productSlices.ts";
 
 export const rootReducer = combineReducers({
-  listSlices: listSlices.reducer,
-  productSlices: productSlices.reducer,
+	listSlices: listSlices.reducer,
+	productSlices: productSlices.reducer,
 });
 export const store = configureStore({
-  reducer: rootReducer,
+	reducer: rootReducer,
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <Provider store={store}>
-    <FontStyles />
-    <App />
-  </Provider>
+	<Provider store={store}>
+		<FontStyles />
+		<App />
+	</Provider>
 );
 
 export type RootState = ReturnType<typeof store.getState>;

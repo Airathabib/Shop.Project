@@ -1,200 +1,148 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../main";
-import ProductImage from "../ProductImage/productImage";
-import ProductComment from "../ProductComment/productComment";
-import NewCommentForm from "../NewCommentForm/newCommentForm";
+import ProductImage from "../ProductImage/ProductImage";
+import ProductComment from "../ProductComment/ProductComment";
+import NewCommentForm from "../NewCommentForm/NewCommentForm";
 import SimilarProducts from "../SimilarProducts/SimilarProducts";
 import { useParams } from "react-router-dom";
-import Loader from "../Loader/loader";
+import Loader from "../Loader/Loader";
 import { IProduct, ISimilar } from "../redux/types";
 import { getProduct, getSimilars } from "../queries";
 import {
-  setComents,
-  showLoadingProduct,
-  emptyProduct,
-  emptySimilar,
-} from "../redux/slices";
-import { StyledTitle } from "../NewCommentForm/newCommentForm";
-import { StyledProductComment } from "../ProductComment/productComment";
-import styled from "styled-components";
+	setComents,
+	showLoadingProduct,
+	emptyProduct,
+	emptySimilar,
+} from "../redux/productSlices";
 
-const StyledProductItem = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+import { ProductItemComponents } from "./ProductItem.css";
+import { NewCommentFormComponents } from "../NewCommentForm/NewCommentForm.css";
+import { ProductCommentComponents } from "../ProductComment/ProductComment.css";
 
-const StyledItemPresentation = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-`
+const { StyledProductItem, StyledItemPresentation, StyledThumbnail, StyledItemInfo, StyledItemImage, StyledLine, StyledSimilars } = ProductItemComponents;
 
-const StyledThumbnail = styled.div`
-  width: 40%;
-`
+const { StyledTitle } = NewCommentFormComponents;
 
-const StyledItemInfo = styled.div`
-  display: flex;
-  width: 60%;
-  flex-direction: column;
+const { StyledProductComment } = ProductCommentComponents
 
-  & > div:nth-child(1) {
-    font-size: 1.2rem;
-    color: rgba(0, 0, 0, 0.9);
-    font-weight: bold;
-    margin: 10px;
-  }
+const ProductItem: React.FC = () => {
+	const params = useParams();
+	const dispatch = useAppDispatch();
+	const productId = params.productId;
+	const [product, setProduct] = useState(emptyProduct);
+	const [similars, setSimilars] = useState([emptySimilar]);
 
-  & > div:nth-child(2) {
-    font-size: 1rem;
-    color: rgba(0, 0, 0, 0.9);
-    font-weight: lighter;
-    margin: 10px;
-  }
+	const doSuccessProduct = (data: IProduct) => {
+		setProduct(data);
+		dispatch(setComents(data.comments));
+		dispatch(showLoadingProduct(false));
+	};
 
-  & > div:nth-child(3) {
-    font-size: 1rem;
-    color: rgba(0, 0, 0, 0.9);
-    font-weight: bold;
-    margin: 10px;
-  }
-`
+	const doErrorProduct = () => {
+		dispatch(setComents([]));
+		dispatch(showLoadingProduct(false));
+	};
 
-const StyledItemImage = styled.div`
-  display: inline-block;
-`
+	const doSuccessSimilars = (data: ISimilar[]) => {
+		setSimilars(data);
+	};
 
-const StyledLine = styled.div`
-  width: 100%;
-  height: 20px;
-  border-bottom: 1px solid rgb(207, 213, 223);
-`
+	const doErrorSimilars = () => {
+		setSimilars([]);
+	};
 
-const StyledSimilars = styled.div`
-  display: inline-block;
-  width: 100%;
-`
+	if (!productId) return;
 
-interface ProductItemProps {}
+	if (!product.id) {
+		getProduct(productId, doSuccessProduct, doErrorProduct);
+		getSimilars(productId, doSuccessSimilars, doErrorSimilars);
+	}
 
-const ProductItem: React.FC<ProductItemProps> = () => {
-  const params = useParams();
-  const dispatch = useAppDispatch();
-  const productId = params.productId;
-  const [product, setProduct] = useState(emptyProduct);
-  const [similars, setSimilars] = useState([emptySimilar]);
+	useEffect(() => {
+		dispatch(setComents(product.comments));
+	}, [product]);
 
-  const doSuccessProduct = (data: IProduct) => {
-    setProduct(data);
-    dispatch(setComents(data.comments));
-    dispatch(showLoadingProduct(false));
-  };
+	const loading = useSelector(
+		(state: RootState) => state.productSlices.loading
+	);
+	const comments = useSelector(
+		(state: RootState) => state.productSlices.comments
+	);
 
-  const doErrorProduct = () => {
-    dispatch(setComents([]));
-    dispatch(showLoadingProduct(false));
-  };
+	let productImagesReactNodes;
+	if (!!product.images)
+		productImagesReactNodes = product.images.map(
+			(element) =>
+				element.id !== product.thumbnail?.id && (
+					<ProductImage key={element.id} src={element.url} />
+				)
+		);
 
-  const doSuccessSimilars = (data: ISimilar[]) => {
-    setSimilars(data);
-  };
+	let productCommentsReactNodes;
+	if (!!comments)
+		productCommentsReactNodes = comments.map((element) => (
+			<ProductComment
+				key={element.id}
+				name={element.name}
+				body={element.body}
+			/>
+		));
 
-  const doErrorSimilars = () => {
-    setSimilars([]);
-  };
+	let productSimilarReactNodes;
+	if (!!similars)
+		productSimilarReactNodes = similars.map((element) => (
+			<SimilarProducts
+				key={element.id}
+				title={element.title}
+				price={element.price}
+			/>
+		));
 
-  if (!productId) return;
+	return (
+		<StyledProductItem>
+			{loading && <Loader />}
 
-  if (!product.id) {
-    getProduct(productId, doSuccessProduct, doErrorProduct);
-    getSimilars(productId, doSuccessSimilars, doErrorSimilars);
-  }
+			{!loading && (
+				<StyledItemPresentation>
+					<StyledThumbnail>
+						<img
+							src={product.thumbnail?.url}
+							alt={product.thumbnail?.url}
+						></img>
+					</StyledThumbnail>
+					<StyledItemInfo>
+						<div>{product.title}</div>
+						<div>{product.description}</div>
+						<div>Price: &nbsp;{product.price}</div>
+					</StyledItemInfo>
+				</StyledItemPresentation>
+			)}
 
-  useEffect(() => {
-    dispatch(setComents(product.comments));
-  }, [product]);
+			<StyledLine></StyledLine>
 
-  const loading = useSelector(
-    (state: RootState) => state.productSlices.loading
-  );
-  const comments = useSelector(
-    (state: RootState) => state.productSlices.comments
-  );
+			{!loading && <StyledTitle> Other photos </StyledTitle>}
+			{!loading && <StyledItemImage>{productImagesReactNodes}</StyledItemImage>}
 
-  let productImagesReactNodes;
-  if (!!product.images)
-    productImagesReactNodes = product.images.map(
-      (element) =>
-        element.id !== product.thumbnail?.id && (
-          <ProductImage key={element.id} src={element.url} />
-        )
-    );
+			<StyledLine></StyledLine>
 
-  let productCommentsReactNodes;
-  if (!!comments)
-    productCommentsReactNodes = comments.map((element) => (
-      <ProductComment
-        key={element.id}
-        name={element.name}
-        body={element.body}
-      />
-    ));
+			{!loading && <StyledTitle> Comments </StyledTitle>}
+			{!loading && (
+				<StyledProductComment>{productCommentsReactNodes}</StyledProductComment>
+			)}
 
-  let productSimilarReactNodes;
-  if (!!similars)
-    productSimilarReactNodes = similars.map((element) => (
-      <SimilarProducts
-        key={element.id}
-        title={element.title}
-        price={element.price}
-      />
-    ));
+			<StyledLine></StyledLine>
 
-  return (
-    <StyledProductItem>
-      {loading && <Loader />}
+			{!loading && (
+				<NewCommentForm product={product} productComments={comments} />
+			)}
 
-      {!loading && (
-        <StyledItemPresentation>
-          <StyledThumbnail>
-            <img
-              src={product.thumbnail?.url}
-              alt={product.thumbnail?.url}
-            ></img>
-          </StyledThumbnail>
-          <StyledItemInfo>
-            <div>{product.title}</div>
-            <div>{product.description}</div>
-            <div>Price: &nbsp;{product.price}</div>
-          </StyledItemInfo>
-        </StyledItemPresentation>
-      )}
+			<StyledLine></StyledLine>
 
-      <StyledLine></StyledLine>
-
-      {!loading && <StyledTitle> Other photos </StyledTitle>}
-      {!loading && <StyledItemImage>{productImagesReactNodes}</StyledItemImage>}
-
-      <StyledLine></StyledLine>
-
-      {!loading && <StyledTitle> Comments </StyledTitle>}
-      {!loading && (
-        <StyledProductComment>{productCommentsReactNodes}</StyledProductComment>
-      )}
-
-      <StyledLine></StyledLine>
-
-      {!loading && (
-        <NewCommentForm product={product} productComments={comments} />
-      )}
-
-      <StyledLine></StyledLine>
-
-      {!loading && <StyledTitle> Similar Products </StyledTitle>}
-      {!loading && <StyledSimilars>{productSimilarReactNodes}</StyledSimilars>}
-    </StyledProductItem>
-  );
+			{!loading && <StyledTitle> Similar Products </StyledTitle>}
+			{!loading && <StyledSimilars>{productSimilarReactNodes}</StyledSimilars>}
+		</StyledProductItem>
+	);
 };
 
 export default ProductItem;

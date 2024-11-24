@@ -1,115 +1,71 @@
 import React, { useState } from "react";
 import { useAppDispatch } from "../main";
-import { setFilter } from "../redux/slices";
-import styled from "styled-components";
+import { setFilter } from "../redux/listSlices";
+import { FilterComponents } from "./Filter.css";
 
-const StyledFilter = styled.div`
-  margin-bottom: 10px;
-  
-  & > label {
-    font-size: 1rem;
-    color: rgba(0, 0, 0, 0.9);
-  }
-  
-  & > button {
-    width: 110px;
-    height: 40px;
-    border-radius: 50px;
-    text-decoration: none;
-    color: #3b3c3d;
-    outline: none;
-    border: 0.5px solid black;
-    cursor: pointer;
-    font-size: 1rem;
-    background-color: lightcyan;
-  }
+const { StyledFilter, StyledInput, StyledInputTitle } = FilterComponents
 
-  & > span {
-    font-weight: bold;
-  }
-`
+const Filter: React.FC = () => {
 
-const StyledInput = styled.input`
-  width: 80px;
-  height: 40px;
-  border-radius: 5px;
-  border: 0.5px solid rgb(114, 115, 117);
-  font-size: 1rem;
-  color: rgba(0, 0, 0, 0.9);
-  outline: none;
-`
+	const [title, setTitle] = useState("");
+	const [from, setFrom] = useState<number>(0);
+	const [to, setTo] = useState<number>(0);
+	const dispatch = useAppDispatch();
 
-const StyledInputTitle = styled.input`
-  width: 120px;
-  height: 40px;
-  border-radius: 5px;
-  border: 0.5px solid rgb(114, 115, 117);
-  font-size: 1rem;
-  color: rgba(0, 0, 0, 0.9);
-  outline: none;
-`
+	const handleSetFilter = () => {
+		console.log('click');
+		dispatch(
+			setFilter({
+				title: title,
+				priceFrom: from,
+				priceTo: to,
+			})
+		);
+	};
 
-interface FilterProps {}
+	return (
+		<StyledFilter>
+			<label>
+				<b>Title:</b>
+			</label>
 
-const Filter: React.FC<FilterProps> = () => {
-  const [title, setTitle] = useState("");
-  const [from, setFrom] = useState<number>(0);
-  const [to, setTo] = useState<number>(0);
-  const dispatch = useAppDispatch();
+			<StyledInputTitle
+				name="title"
+				type="text"
+				value={title}
+				onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setTitle(e.target.value)}
+			/>
 
-  const handleClick = () => {
-    dispatch(
-      setFilter({
-        title: title,
-        priceFrom: from,
-        priceTo: to,
-      })
-    );
-  };
+			<span>Price:</span>
+			<label>
+				<b></b>
+			</label>
 
-  return (
-    <StyledFilter>
-      <label>
-        <b>Title:</b>
-      </label>
-      &nbsp;&nbsp;
-      <StyledInputTitle
-        name="title"
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      &nbsp;&nbsp;
-      <span>Price:</span>
-      <label>
-        <b></b>
-      </label>
-      &nbsp;&nbsp;
-      <StyledInput
-        name="from"
-        type="number"
-        value={from}
-        min="0"
-        onChange={(e) => setFrom(Number(e.target.value))}
-      />
-      &nbsp;&nbsp;
-      <label>
-        <b>-</b>
-      </label>
-      &nbsp;&nbsp;
-      <StyledInput
-        name="from"
-        type="number"
-        value={to}
-        min="0"
-        onChange={(e) => setTo(Number(e.target.value))}
-      />
-      &nbsp;&nbsp;
-      <button type="button" onClick={handleClick}>
-        Search
-      </button>
-    </StyledFilter>
-  );
+			<StyledInput
+				name="from"
+				type="number"
+				value={from}
+				min="0"
+				onChange={(e: { target: { value: any; }; }) => setFrom(Number(e.target.value))}
+			/>
+
+			<label>
+				<b>-</b>
+			</label>
+
+			<StyledInput
+				name="from"
+				type="number"
+				value={to}
+				min="0"
+				onChange={(e: { target: { value: any; }; }) => setTo(Number(e.target.value))}
+			/>
+
+			<button type="button" onClick={handleSetFilter}>
+				Search
+			</button>
+		</StyledFilter>
+	);
 };
 
 export default Filter;

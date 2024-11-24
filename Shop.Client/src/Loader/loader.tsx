@@ -1,25 +1,16 @@
 import React from "react";
-import styled from "styled-components";
+import { LoaderComponents } from "./Loader.css";
 import icon from "../images/loader.webp";
 
-const StyledLoader = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: -webkit-fill-available;
+const { StyledLoader } = LoaderComponents;
 
-  & > img {
-    width: 120px;
-    height: 120px;
-  }
-`
 
 const Loader: React.FC = () => {
-  return (
-    <StyledLoader>
-      <img src={icon} alt="loader image" />
-    </StyledLoader>
-  );
+	return (
+		<StyledLoader>
+			<img src={icon} alt="loader image" />
+		</StyledLoader>
+	);
 };
 
 export default Loader;

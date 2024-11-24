@@ -1,39 +1,21 @@
 import React from "react";
-import styled from "styled-components";
+import { ProductCommentComponents } from "./ProductComment.css";
 
-export const StyledProductComment = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  width: 100%;
+const { StyledProductComment } = ProductCommentComponents
 
-  & > p:nth-child(1) {
-    display: flex;
-    justify-content: left;
-    margin: 2px;
-    font-weight: bold;
-  }
-
-  & > p:nth-child(2) {
-    display: flex;
-    justify-content: left;
-    margin: 2px;
-    font-weight: lighter;
-  }
-`
 
 interface ProductCommentProps {
-  name: string;
-  body: string;
+	name: string;
+	body: string;
 }
 
 const ProductComment: React.FC<ProductCommentProps> = ({ name, body }) => {
-  return (
-    <StyledProductComment>
-      <p> {name} </p>
-      <p> {body} </p>
-    </StyledProductComment>
-  );
+	return (
+		<StyledProductComment>
+			<p> {name} </p>
+			<p> {body} </p>
+		</StyledProductComment>
+	);
 };
 
 export default ProductComment;
